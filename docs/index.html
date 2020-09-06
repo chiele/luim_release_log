@@ -12,14 +12,14 @@
   <div id="app"></div>
   <script>
     window.$docsify = {
-		name: '',
+		name: 'LUIM版本上线日志',
 		repo: '',
 		loadSidebar: true,
-		subMaxLevel: 2,
+		subMaxLevel: 3,
 		// 完整配置参数
 		search: {
-		  maxAge: 86400000, // 过期时间，单位毫秒，默认一天
-		  paths: [], // or 'auto'
+		  maxAge: 0, // 过期时间，单位毫秒，默认一天
+		  paths: 'auto',
 		  placeholder: '搜索关键词',
 		  noData: '找不到结果',
 		  // 搜索标题的最大层级, 1 - 6
@@ -30,5 +30,6 @@
   </script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
 </body>
 </html>
