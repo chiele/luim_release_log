@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="vue.min.js"></script>
+    <script src="vue-resource.min.js"></script>
+    <script src="marked.min.js"></script>
+    <style>
+        #app {
+            padding: 10px 25px 25px;
+        }
+        img {
+            max-width: 100%;
+        }
+        body::-webkit-scrollbar-track
+        {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+            background-color: #F5F5F5;
+        }
+
+        body::-webkit-scrollbar
+        {
+            width: 10px;
+            background-color: #F5F5F5;
+        }
+
+        body::-webkit-scrollbar-thumb
+        {
+            background-color: #FFF;
+            background-image: -webkit-gradient(linear,
+            40% 0%,
+            75% 84%,
+            from(#bb313e25),
+            to(#b1ce2425),
+            color-stop(.6,#8a244b25))
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div v-html="message" v-if="message"></div>
+        <div v-else style="text-align: center;">
+            <img alt="" src="maintenance.gif" style="height: 100%;text-align: center;" />
+        </div>
+    </div>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                version: '',
+                message: ''
+            },
+            created () {
+                var self = this;
+                var rendererMD = new marked.Renderer();
+                marked.setOptions({
+                    renderer: rendererMD,
+                    gfm: true,
+                    tables: true,
+                    breaks: false,
+                    pedantic: false,
+                    sanitize: false,
+                    smartLists: true,
+                    smartypants: false
+                });
+                this.version = this.getUrlParam('v');
+                this.$http.get(this.version + '.md').then((response) => {
+                    self.message = marked(response.body);
+                }, (error) => {
+                    console.log(error);
+                })
+            },
+            methods: {
+                getUrlParam(name) {
+                    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+                    var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+                    if (r != null) return decodeURI(r[2]); return null; //返回参数值
+                }
+            }
+        })
+    </script>
+</body>
+</html>
