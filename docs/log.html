@@ -67,6 +67,46 @@
                 this.version = this.getUrlParam('v');
                 this.$http.get(this.version + '.md').then((response) => {
                     self.message = marked(response.body);
+                    app.$nextTick(function () {
+                        // 手机页面中所有图片 p>img
+                        let imgArr = [];
+                        let domArr = document.querySelectorAll("h4 + p");
+                        let k = 0;
+                        for (let i = 0; i < domArr.length; i++) {
+                            // 获取图片显示文本
+                            let title = domArr[i].previousElementSibling.textContent;
+                            let titleFirstSpaceIndex = title.indexOf(' ');
+                            if (titleFirstSpaceIndex >= 0) {
+                                title = title.substr(titleFirstSpaceIndex);
+                            }
+                            let tmpImgArr = domArr[i].querySelectorAll('img');
+                            for (let j = 0; j < tmpImgArr.length; j++) {
+                                let imgSrc = tmpImgArr[j].dataset["zoomSrc"];
+                                if (!imgSrc) {
+                                    imgSrc = tmpImgArr[j].src;
+                                }
+                                tmpImgArr[j].dataset["index"] = k + '';
+                                tmpImgArr[j].onclick = function (e) {
+                                    let startIndex = e.target.dataset['index'];
+                                    window.parent.postMessage({name: 'showPhotos',index: startIndex}, '*');
+                                };
+                                imgArr.push({
+                                    alt: title,
+                                    pid: 'imgItem' + k, //图片id
+                                    src: imgSrc, //原图地址
+                                    thumb: imgSrc //缩略图地址
+                                });
+                                k++;
+                            }
+                        }
+                        let photosData = {
+                            title: "相册标题", //相册标题
+                            id: 'release_log_photos', //相册id
+                            start: 0, //初始显示的图片序号，默认0
+                            data: imgArr
+                        };
+                        window.parent.postMessage({name: 'initPhotos',photosData: photosData}, '*');
+                    });
                 }, (error) => {
                     console.log(error);
                 })
